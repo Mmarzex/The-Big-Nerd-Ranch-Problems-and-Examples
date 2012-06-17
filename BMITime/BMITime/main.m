@@ -19,6 +19,8 @@ int main(int argc, const char * argv[])
         // Create Employee array
         NSMutableArray *employees = [[NSMutableArray alloc] init];
         
+        NSMutableDictionary *executives = [[NSMutableDictionary alloc] init];
+        
         for (int i = 0; i < 10; i++) {
             // Create employee instance
             Employee *person = [[Employee alloc] init];
@@ -30,6 +32,16 @@ int main(int argc, const char * argv[])
             
             //Put employee into array
             [employees addObject:person];
+            
+            // Is first?
+            if (i == 0) {
+                [executives setObject:person forKey:@"CEO"];
+            }
+            
+            // Is second?
+            if (i == 1) {
+                [executives setObject:person forKey:@"CTO"];
+            }
         }
         
         NSMutableArray *allAssets = [[NSMutableArray alloc] init];
@@ -55,10 +67,22 @@ int main(int argc, const char * argv[])
             [allAssets addObject:asset];
         }
         
+        NSSortDescriptor *voa = [NSSortDescriptor sortDescriptorWithKey:@"valueOfAssets" ascending:YES];
+        NSSortDescriptor * ei = [NSSortDescriptor sortDescriptorWithKey:@"employeeID" ascending:YES];
+        [employees sortUsingDescriptors:[NSArray arrayWithObjects:voa, ei, nil]];
+        
         NSLog(@"Employees: %@", employees);
         NSLog(@"Give up ownership of one employee");
         [employees removeObjectAtIndex:5];
         NSLog(@"allAssets: %@", allAssets);
+        NSLog(@"exectuives: %@", executives);
+        executives = nil;
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"holder.valueOfAssets > 70"];
+        NSArray *toBeReclaimed= [allAssets filteredArrayUsingPredicate:predicate];
+        NSLog(@"toBeReclaimed: %@", toBeReclaimed);
+        toBeReclaimed = nil;
+        
         NSLog(@"Giving up ownership of array");
         
         allAssets = nil;
